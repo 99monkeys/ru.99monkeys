@@ -1,0 +1,128 @@
+@import "lib/*";
+@import "compass/typography/lists/horizontal-list";
+
+$header-color:  #B32C06;
+$link-color:    #B32C06;
+$special-color: #B32C06;
+$link-bg-color: #faffe3;
+
+ul.horizontal {
+  @include horizontal-list(10px);
+}
+
+.first.columns{
+  margin-left: 0px;
+}
+
+.motto {
+  position: relative;
+  margin: 2em 0;
+  padding: 1em 0;
+  border-bottom: 1px solid #ddd;
+  h4, h5  {
+    color: #333;
+    & > span.special {
+      color: $header-color;
+    }
+  }
+
+  .fb-social {
+    overflow-x: visible;
+    position: absolute;
+    top: 20px;
+    right: -40px;
+  }
+}
+
+h5 {
+  color: $header-color;
+  margin-bottom: 0.5em;
+  letter-spacing: 0.1em;
+}
+
+span.special {
+  color: $special-color;
+}
+
+span.nowrap {
+  white-space: nowrap;
+}
+
+a, a:visited, p a, p a:visited {
+  color: $link-color;
+  text-decoration: none;
+  display: inline-block;
+  border-bottom: 1px solid #ccc;
+  &:hover {
+    color: $link-color;
+    background-color: $link-bg-color;
+    border-bottom: 1px solid $link-color;
+  }
+}
+
+p.address {
+  margin-bottom: 10px;
+}
+
+.columns.first {
+
+}
+
+/* #Media Queries
+================================================== */
+
+/* Smaller than standard 960 (devices and browsers) */
+@media only screen and (max-width: 959px) {
+  .motto .fb-social {
+    position: static;
+  }
+}
+
+/* Tablet Portrait size to standard 960 (devices and browsers) */
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+  body{
+    font-size: 80%;
+    line-height: 1.5
+  }
+}
+
+/* All Mobile Sizes (devices and browser) */
+@media only screen and (max-width: 767px) {
+  body{
+    font-size: 80%;
+    line-height: 1.5
+  }
+  ul.horizontal li{
+    display: block;
+    float: none;
+    padding-left: 0;
+  }
+}
+
+/* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {}
+
+/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+@media only screen and (max-width: 479px) {}
+
+
+/* #Font-Face
+================================================== */
+/* 	This is the proper syntax for an @font-face file
+		Just create a "fonts" folder at the root,
+		copy your FontName into code below and remove
+		comment brackets */
+
+/*	@font-face {
+	    font-family: 'FontName';
+	    src: url('../fonts/FontName.eot');
+	    src: url('../fonts/FontName.eot?iefix') format('eot'),
+	         url('../fonts/FontName.woff') format('woff'),
+	         url('../fonts/FontName.ttf') format('truetype'),
+	         url('../fonts/FontName.svg#webfontZam02nTh') format('svg');
+	    font-weight: normal;
+	    font-style: normal; }
+*/
+
+
+

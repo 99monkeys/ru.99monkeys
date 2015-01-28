@@ -1,0 +1,133 @@
+.container
+  %header.motto.row
+    .fb-social.offset-by-one
+      = partial "shared/like_button"
+    %hgroup.offset-by-one
+      %h3
+        %span Разработка приложений
+        %span.special.nowrap Ruby on Rails
+      %h5
+        Сайты и веб-приложения любой сложности. Всегда вовремя
+
+  %section.about.row.offset-by-one
+    %article.ten.columns.first
+      %p
+        %strong Botcamp
+        \- команда талантливых web-инженеров. Мы беремся за проекты высокой сложности, работаем с компаниями
+        на стадии быстрого роста, осуществляем
+        %strong технологическую поддержку
+        стартапов.
+
+      %p
+        Мы хорошо разбираемся в стэке технологий для построения современных
+        %strong web-приложений.
+        Работаем короткими итерациями по
+        %strong 1-2
+        недели.
+        Первый космо-релиз вы увидите через 5 дней!
+
+      %p
+        В работе используем
+        %span.special Ruby on Rails, Postgres, Sphinx, Redis, Mongo, Javascript, HTML5.
+
+    %article.five.columns
+      %header
+        %h5
+          True engineers
+        %p
+          У нас очень простой преселекшн. Отправьте ссылку на проект, в котором вы принимали участие и расскажите,
+          что сделали
+          %strong своими руками.
+        %p Мы отдаем предпочтения специалистам, которые одинаково любят заниматься Frontend'ом и Backend'om.
+
+  %hr
+
+  %section.services.row.offset-by-one
+    %article.five.columns.first
+      %header
+        %h5 Создание прототипа
+      %p
+        Вам нужно быстро создать прототип продукта, чтобы провести демонстрацию для инвесторов,
+        или вы хотите быстро
+        %strong проверить идею
+        продукта на реальных пользователях.
+        Мы поможем продумать и сделать прототип от 5 рабочих дней. Покажите вашим инвесторам то, что они действительно любят!
+
+
+    %article.five.columns
+      %header
+        %h5 Запуск проекта
+      %p
+        У вас есть
+        %strong продуманная
+        или проверенная идея, мы вдохнем в нее новую жизнь.
+        Вместе спланируем этапы разработки, предложим оптимальную архитектуру и выберем правильный стэк технологий,
+        который будет соответствовать требованиям современного web-приложения. Затем мы разработаем дизайн и сделаем продукт.
+
+
+    %article.five.columns
+      %header
+        %h5 Консалтинг и поддержка
+      %p
+        У вас уже есть готовое
+        %strong запущенное
+        приложение, но дальнейший рост ограничивается высокими издержками на поддержку.
+        А может быть в архитектуру вашего приложения заложены неправильные технические решения. В любом случае,
+        мы поможем вам обнаружить эти слабости, чтобы преодолеть ограничения для дальнейшего роста.
+
+  %hr/
+
+  -#%section.portfolio.row.offset-by-one
+    -#%header
+      -#%h5 Последние проекты
+
+    -#%article.four.columns.first
+      -#%figure
+        -#%p= image_tag "portfolio/port_domgeo.png"
+        -#%figcaption
+          -#%noindex
+            -#= link_to "DOMGEO", "http://domgeo.ru", :rel => "nofollow", :target=>"_blank"
+          -#\- сайт недвижимости. Мы принимали участие в запуске с самого начала.
+
+
+    -#%article.four.columns
+      -#%figure
+        -#%p= image_tag "portfolio/port_everdesk.png"
+        -#%figcaption
+          -#= link_to "Everdesk.ru", "http://everdesk.ru", :target=>"_blank"
+          -#\- онлайн площадка для поиска и бронирования рабочего места. Коворкинги, офис на час и т.д.
+    -#%article.four.columns
+      -#%figure
+        -#%p= image_tag "portfolio/port_calipt.png"
+        -#%figcaption
+          -#= link_to "Calipt.ru", "http://calipt.ru", :target=>"_blank"
+          -#\- публикация контента внутри фотографий.
+
+
+
+    -#%article.three.columns
+      -#%figure
+        -#%p= image_tag "portfolio/port_reserved.png"
+        -#%figcaption Ваш проект может быть следующим.
+
+  %footer.row.offset-by-one
+    %p.address
+      Наш лунопарк по адресу:
+      = link_to "Москва, пер. Чернышевского 4c1 офис 11", "http://maps.yandex.ru/?text=%D0%A0%D0%BE%D1%81%D1%81%D0%B8%D1%8F%2C%20%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0%2C%20%D0%BF%D0%B5%D1%80%D0%B5%D1%83%D0%BB%D0%BE%D0%BA%20%D0%A7%D0%B5%D1%80%D0%BD%D1%8B%D1%88%D0%B5%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE%2C%204%D1%811&sll=37.608589%2C55.782106&ll=37.608589%2C55.782173&spn=0.020127%2C0.006191&z=16&l=map", :target=>"_blank"
+    %ul.horizontal
+      %li
+        Моб.: +7 (903) 775 43 56
+      %li
+        Email:
+        = mail_to "1@99monkeys.ru","1@99monkeys.ru"
+      %li
+        Skype:
+        = link_to "varlamoved", "skype://varlamoved"
+
+    %p
+      99monkeys© мы работаем с  2012 года. Быстрый старт вашим заряженным идеям.
+
+
+
+
+
