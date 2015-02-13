@@ -1,0 +1,113 @@
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+:css
+  pre  { font-family: Monospace; }
+  body { padding: 1em; }
+
+%h2 1. Напечатать однонаправленный список.
+
+%p
+  На ruby массив передаются по ссылке. Поэтому можно представить структуру однонаправленного списка {значение, ссылка на следующий элемент}
+  массивом.
+
+%pre
+  %code.ruby
+    :preserve
+      one_way_list = [1, [2, [3, nil] ] ]
+
+      def reverse_print(list)
+        finish = nil
+        while finish != list do
+          item = list
+          while item[1] != finish do
+            item = item[1]
+          end
+          puts item[0]
+
+          finish = item
+        end
+      end
+
+      reverse_print(one_way_list)
+%p данная операция занимает точно n(n+1)/2 операции, те O(n^2) сложность алгоритма
+
+
+%h2 2. бинарное представление ip адреса в строковое
+%pre
+  %code.ruby
+    :preserve
+      ip = 2294967297 # 32-битное представление ip адреса
+      puts Array.new(4) { |n| ( ip >> (n*4) ) & 255 }.reverse.join('.')
+
+
+
+%h2 3. подсчет уникальных посетителей
+а) Точный подсчет
+Кол-во вариации ip = 2^32. Значит нам нужно иметь 2^32битовый вектор (512мегабайт)
+Получая новый ip адрес мы преобразуя его в число, смещаясь на заданное число бит, устанавливаем бит в 1.
+Далее подсчет осуществляется с помощью определения числа 1 в выделенной памяти.
+
+Вариант 2. Если мы не очень уж популярны и уверены что у нас не будет больше ~134млн (512mb/4bytes) посетителей то оправдано хранить
+сами значения ip адреса в хэше
+
+b) Приблизительное значение
+
+512 мегабайт черезчур много ( и жалко) для такой простой задачи.
+Можн попробывать обойтись ~50мегабайтами если вопспольваться знанием теории вероятности и статистики.
+Зная что например в 1000битовом векторе 1000 раз установим случайный бит (равномерное распределение) в 1, то кол-во единиц
+будет очень близко 630 (а не 1000). Зная это, можно восстановить кол-во операции. Например, если мы видим вектор 1000 длины и 630 единиц,
+которые устанавливали случайно и равномерно (условие для хэш-функции), то мы можем утверждать что ~1000 операции установки бита было совершено над вектором.
+Подробнее http://bazhenov.me/blog/2012/12/12/linear-counter.html.
+
+Вариант 2
+LogLog алгоритмы, решающие подобную задачу. В частности модификация алгоритмы HyperLogLog
+
+
+
+BackEnd
+
+%h2 1. N лучших игроков, Номер рейтинга
+нужно построить таблицу
+
+ratings (user_id, rating)
+
+%pre
+  %code.sql
+    :preserve
+
+      строим индекс(btree) по rating.
+      SELECT user_id FROM ratings ORDER BY rating DESC LIMIT N; возвращает
+
+      Создаем представление с расчитанным рейтингом, поиск позиции делая запрос через ranks.
+      CREATE VIEW ranks AS
+      SELECT id, rank() OVER (ORDER BY number DESC) as rank FROM test_rating;
+
+PS: Также можно кэшировать позицию рейтинга в колонку (user_id, rating, rank) и создать триггер на обновления rating в таблице и делать перерасчет позации.
+
+%h2 2. Ближайший соперник
+
+Таблица users(id, rating, level, total_rating)
+
+%p
+  Тотал рейтинг пересчитывается при обновлении rating, level (триггер).
+  Строим индекс по total_rating.
+
+%p
+  Для поиска ближайшего соперника делаем запрос вида
+  Ищем ближайшего соперника сверху и снизу и из двух выбираем минимального.
+%p
+  Вместо ? подставляем значение total_rating у заданного игрока.
+
+%pre
+  %code.sql
+    :preserve
+      SELECT * FROM
+      (
+        (SELECT id, total_rating FROM t WHERE total_rating >= ? ORDER BY total_rating LIMIT 1) AS above
+        UNION ALL
+        (SELECT id, total_rating FROM t WHERE total_rating < ? ORDER BY total_rating DESC LIMIT 1) as below
+      )
+      ORDER BY abs(?-total_rating) LIMIT 1;
