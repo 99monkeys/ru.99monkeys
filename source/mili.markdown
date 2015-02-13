@@ -5,7 +5,10 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
-<style> pre { font-family: Monospace; } </style>
+<style> 
+  pre  { font-family: Monospace; }
+  body { padding: 1em; }
+</style>
 
 ## 1. Скрипт загрузчик картинок с заданной страницы. Скаченные картинки попадают в папку download/{domain}
 <pre><code class="bash">
