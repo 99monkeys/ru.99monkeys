@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
+    <title></title>
+    <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css" />
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+    <style> 
+      pre  { font-family: Monospace; }
+      body { padding: 1em; }
+    </style>
+    
+    <h2 id="downloaddomain">1. Скрипт загрузчик картинок с заданной страницы. Скаченные картинки попадают в папку download/{domain}</h2>
+    <pre><code class="bash">
+    ## bash
+    ./image_grabber.rb http://yandex.ru
+    </code></pre>
+    <p><br /></p>
+    <pre><code class="ruby">
+    ## file : image_grabber.rb
+    #!/usr/bin/env ruby
+    require 'rubygems'
+    require 'nokogiri'
+    require 'open-uri'
+    
+    #site_url    = 'http://blog.website.com/'
+    site_url    = ARGV.shift
+    folder_name = URI(site_url).host
+    `mkdir download/#{folder_name}`
+    
+    puts "open site #{site_url}"
+    page = Nokogiri::HTML(open(site_url))
+    
+    puts "start parsing..."
+    page.search('img').each_with_index do |img, index|
+      full_image_url = URI.join(site_url, img['src']).to_s
+      puts "#{index.next.to_s.ljust(3)} #{full_image_url}"
+      filename =File.expand_path File.join("download",folder_name, File.basename(full_image_url)), File.dirname(__FILE__)
+      File.open(filename, 'wb') do |f|
+        f.write open(full_image_url)
+      end
+    end
+    puts 'finished'
+    </code></pre>
+    
+    <h4 id="section">Улучшения</h4>
+    <ul>
+      <li>Закачивать картинки с помощью curl</li>
+      <li>Использовать многопоточность</li>
+    </ul>
+    
+    <h2 id="n">2. Поиск двух пропущщеных чисел в последовательности от 1..N</h2>
+    <p>Задача решается в лоб за O(N) проходов.</p>
+    
+    <p>Я предложил решение за O(logN) проходов. Написал некую модификацию бинарного поиска.
+    Идея алгоритма:
+    - взять серединный элемент(по индексу) и сравнить его с ожидаемым  значением(индекс и значение элемента должны совпадать)
+    - определяя разницу между ожидаемым числом и фактическим (разница может быть 0,1,2)  мы можем однозначно сказать по какую сторону
+      расположены пропущенные значения.</p>
+    
+    <pre><code class="ruby">
+    N = 100
+    forgeted =  (1..N).to_a.sample(2)
+    $arr =(1..N).to_a - forgeted
+    
+    puts forgeted.inspect
+    puts $arr.inspect
+    
+    def find_word(first, last, min, max)
+      return if last &lt; first
+    
+      central      = first + ((last - first +0.5 )/2).round
+      central_item = $arr[central-1]
+      puts "#{first} #{last} #{min} #{max}  central:#{central} citem:#{central_item}"
+    
+    
+      if first!=last
+    
+        if central == last &amp;&amp; max - central_item == 2
+          puts central_item + 1
+        end
+        if central == last &amp;&amp; max - central_item == 3
+          puts central_item + 1
+          puts central_item + 2
+        end
+    
+        case central_item - central
+        when  1, -1
+          find_word(first, central-1, min, central_item)
+          find_word(central+1, last, central_item, max)
+        when  2
+          find_word(first, central-1,min, central_item)
+        when 0
+          find_word(central+1, last, central_item, max)
+        end
+    
+      else
+        if max - central_item == 3
+          puts(central_item + 1)
+          puts(central_item + 2)
+        end
+    
+        if max - central_item == 2
+          puts(central_item + 1)
+        end
+    
+        if min - central_item == -2
+          puts(central_item - 1)
+        end
+    
+        if min - central_item == -3
+          puts(central_item - 1)
+          puts(central_item - 2)
+        end
+      end
+    end
+    
+    find_word(1, N-2, 0, N+1)
+    </code>
+    </pre>
+    
+    <h2 id="ruby">3. Слабые стороны Ruby</h2>
+    
+    <p>Вытекают из его же и преимуществ</p>
+    
+    <ul>
+      <li>Интерпретируемый язык:  Медленный по сравнению с компилируемыми языками. Многие ошибки выявляются только входе работы программы (Runtime).</li>
+      <li>Динамическая типизация: Больше шансов получить runtime ошибку. Невозможность отловить ошибки на этапе запуска приложения.</li>
+      <li>Ссылочная передача объектов: вместе с динамической типизацией и использованием стороннего кода, может приводить к утечкам памяти( потери ссылки объектов, без сбора их GC).</li>
+      <li>Автоматическая сборока мусора в памяти GC: Нет возможности гарантировать что часть кода отработает за N-ое время. Автоматически GC вносить элемент случайности в потребление памяти и процессорного времени.</li>
+      <li>Как и большинство императивных языков не позволяет качественно масштабировать приложение на многоядерных процессорах. Написание многопоточных приложений возможно, однако создает трудности в отлаживании кода, включая RaceCondition.</li>
+    </ul>
+    
+    <h2 id="section-1">4. Большой поток входных данных с последюущей обработкой, сохранением передачей.</h2>
+    
+    <p>Обработка, Сохранение, Дальнейшая передача могут выполняться параллельно и асинхронно. написания асинхронных и параллельных приложени с использованием Erlang делается иногда тривиально просто.
+    Erlang хорошо себя зарекомендовал в системах видеотрансляции, вебинары, online-чаты, биллинг, брокерские операции. Все эти задачи соответствуют описанным условиям.</p>
+    
+    <h2 id="section-2">5. Пользователи вконтакте</h2>
+    <p>На хабре была статья про clickjacking вконтакте, когда frame виджета с помощью css/js подставляется под курсор и делается прозрачным.
+    При клике происходить добавление приложения/вступления в группу.</p>
+    
+    <p>Посмотрел api VK.Auth.getLoginStatus(function(response) {…response.session.mid…}) это сработает но в случае если пользователь уже добавил себе приложение</p>
+    
+    <p>Также возможно найти лазейку и через кроссдоменный запрос (jsonp) получить id пользователя. Я писал скрипт который использую jsonp идентифицировал пользователя без каких-либо действий, но сервер писал я :)</p>
+    
+    <p>Можно попытаться воспользоваться некоторыми аномальными поведениями. Например по запросу http://m.vk.com/photos происходит редирект на http://m.vk.com/photos{user_id}
+    Загрузить в фрейме страницу и попытаться вернуть новый location из фрейма.</p>
+    
+    <p>socfishing.ru обещает сделать нечто подобное за 5руб/запрос. Можно платить или сделать reverse engineering их кода. Опыт есть.</p>
+    
+    <h2 id="section-3">6. 10 пользователей с максимальным числом сообщений</h2>
+    <pre><code class="sql">
+    SELECT users.id, count(1) AS counter FROM users
+    INNER JOIN messages ON messages.user_id = users.id
+    GROUP BY users.id
+    ORDER BY counter DESC
+    LIMIT 10;
+    </code></pre>
+    
+    <h2 id="section-4">7. Два списка в один.</h2>
+    <p>Идея: отсортировать первый массив qsort. И далее уже добавлять элементы используя бинарный поиск
+    Оценка сложности алгоритма: пусть два массива имеют размерность N
+    тогда быстрая сортировка займет O(NlogN) и N раз добавление элемента O(logN) ~ O(2NlogN)</p>
+    
+    <p>В качестве оптимизации можно попробывать использовать двоичную кучу, вместо сортировки.</p>
+    
+    <h2 id="section-5">8. Расчет кредита</h2>
+    
+    <pre><code class="ruby">
+    sum     = 9534
+    days    = 9
+    times   = 3
+    percent = 1.7
+    
+    dolg = days/times * percent / 100 * sum * ( times + 1) / 2
+    
+    paytime = ((sum+dolg) / times).truncate()
+    total   = paytime * times
+    
+    puts "sum:     #{sum.to_s.rjust(10)}"
+    puts "days:    #{days.to_s.rjust(10)}"
+    puts "times:   #{times.to_s.rjust(10)}"
+    puts "percent  #{percent.to_s.rjust(10)}"
+    puts "dolg:    #{dolg.to_s.rjust(10)}"
+    puts "sum+dolg:#{(sum+dolg).to_s.rjust(10)}"
+    puts "----------"
+    puts "total:   #{total.to_s.rjust(10)}"
+    puts "paytime: #{paytime.to_s.rjust(10)}"
+    </code></pre>
+    
+    <pre><code class="text">
+    ## ПРИМЕР 
+    sum:           9534
+    days:             9
+    times:            3
+    percent         1.7
+    dolg:       972.468
+    sum+dolg: 10506.468
+    ----------
+    total:        10506
+    paytime:       3502
+    </code></pre>
+    
+    <h2 id="section-6">9. Есть запрос (структуру данных додумать)</h2>
+    <pre><code class="sql">
+    select * from comments where tag_id in (...) order by created_at desc offset n limit m;
+    </code></pre>
+    <p>Выборка происходит по tag_id 
+    Данный запрос можно ускорить, если создать индекс по полю tag_id.
+    Для tag_id можно построить как обычный индекс (btree) с O(logN) или Hash(сюда подходит лучше тк мы не будем делать операции сравнения) со сложностью поиска O(1)</p>
+    <script src="/javascripts/application.js" type="text/javascript"></script>
+  </body>
+</html>
